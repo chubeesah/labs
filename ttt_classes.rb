@@ -1,26 +1,13 @@
 class Human
-  attr_accessor :player1, :player2, :choices,
-  attr_reader :table, :turn_counter
+  attr_accessor :player1, :player2, :take_turn
   include Enumerable
 
-  def initialize (player1, player2, choices, table, turn_counter)
+  def initialize (player1, player2, take_turn)
     @player1 = player1
     @player2 = player2
-    @choices = ('a'..'z').to_a
-    @table = (1..9).to_a
-    @turn_counter = 9
+    @take_turn = take_turn
   end
   
-  def choose_player
-    result = 1
-  puts 'Choose a letter!'
-  result = gets.chomp.upcase
-    while @choices.include?(result)
-      puts "That isn't a valid choice! (you chose #{result})"
-      result = gets.chomp.upcase
-    end
-  result
-  end
   def take_turn(print_board, turn_counter)
     turn_counter = @turn_counter
     player_choice = gets.chomp.to_i
@@ -36,26 +23,24 @@ class Human
 end
    
 class CPU
-  attr_accessor :player1, :choice
-  attr_reader :cpu_player, :table, :turn_counter
+  attr_reader :cpu_player
+  attr_accessor :cpu_turn
   include Enumerable
 
-  def initialize (player1, cpu_player, choices, table, turn_counter)
-    @player1 = player1
+  def initialize (cpu_player, cpu_turn)
     @cpu_player = cpu_player
-    @choices = ('a'..'z').to_a
-    @table = (1..9).to_a
-    @turn_counter = 9
+    @cpu_turn = cpu_turn
   end
+
   def cpu_turn(player, turn)
   cpu_player = player == 'C' ? 'X' : 'C'
     if turn.odd?
     player_choice = gets.chomp.to_i
-    puts "#{player}'s turn."
+    puts "#{@player1}'s turn."
     @table[player_choice - 1] = player
     return player
     else
-    puts "#{cpu_player}'s turn."
+    puts "#{@cpu_player}'s turn."
     available_moves = @table.select { |x| x.is_a? Fixnum }
     @table[available_moves.sample - 1] = cpu_player
     end
@@ -63,12 +48,21 @@ class CPU
 end
 
 class Game
-attr_reader :wins, :table,
+attr_reader :wins, :table, :turn_counter, :print_board
+attr_accessor :choices, :choose_mode, :choose_player
 include Enumerable
   
+  def initialize (wins, choices, table, turn_counter, choose_mode, print_board, winner, choose_player)
   @wins = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], 
            [2, 5, 8], [3, 6, 9], [1, 5, 9], [7, 5, 3]]
-  @table = table
+  @choices = ('a'..'z').to_a
+  @table = (1..9).to_a
+  @turn_counter = 9
+  @choose_mode = choose_mode
+  @print_board = print_board
+  @winner = winner?
+  @choose_player = choose_player
+  end
 
   def print_board
     puts "
@@ -80,14 +74,25 @@ include Enumerable
   def choose_mode()
   puts '#PvP(1) or CPU(2)?'
   result = gets.chomp.to_i
-    if result == 1 
-      :human  
+    if result == 1
+      :human
     else
       :cpu
     end
   end
 
-def winner?
+  def choose_player
+    result = 1
+  puts 'Choose a letter!'
+  result = gets.chomp.upcase
+    while @choices.include?(result)
+      puts "That isn't a valid choice! (you chose #{result})"
+      result = gets.chomp.upcase
+    end
+  result
+  end
+
+  def winner?
   board = @table
   @wins.any? do |i|
   a = board[0] == board[1] && board[0] == board[2] || board[3] == board[4] && board[3] == board[5] || 
@@ -100,6 +105,7 @@ def winner?
     print_board
     gets
     end
+   end
   end
 end
 
@@ -107,34 +113,41 @@ def greeting
   puts 'Welcome to Tic-Tac_Toe'
 end
 
+NEW_GAME = Game.new 
+
+PVP = Human.new 
+
+COMP = CPU.new 
+
 def ttt_game
-  Game.new
+  NEW_GAME
   greeting
   @turn_counter
   mode = @choose_mode
   if mode == :human
-    Human.new
-    player1 = choose_player
-    player2 = choose_player
-    until winner?
-    print_board
-    take_turn(turn_counter, player1, player2)
-    turn_counter -= 1
+    PVP
+    @player1 = @choose_player
+    @player2 = @choose_player
+    until @winner
+    @print_board
+    @take_turn
+    @turn_counter -= 1
     end
   end
   if mode == :cpu
-    CPU.new
+    COMP
     player1 = choose_player
-    until winner? 
-    print_board
-    cpu_turn(player1, turn_counter)
-    turn_counter -= 1
+    until @winner
+    @print_board
+    @cpu_turn
+    @turn_counter -= 1
     end
   end
-  if turn_counter == 0
-    print_board
-    puts "Its a Draw!"
+  if @turn_counter == 0
+    @print_board
+    puts 'Its a Draw!'
     return false
   end
 end
 
+ttt_game
