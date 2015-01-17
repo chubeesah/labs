@@ -1,51 +1,3 @@
-class Human
-  attr_accessor :player1, :player2, :take_turn
-  include Enumerable
-
-  def initialize (player1, player2, take_turn)
-    @player1 = player1
-    @player2 = player2
-    @take_turn = take_turn
-  end
-  
-  def take_turn(print_board, turn_counter)
-    turn_counter = @turn_counter
-    player_choice = gets.chomp.to_i
-    if turn.odd?
-    puts "#{@player1}'s turn."
-    @table[player_choice - 1] = @player1
-    return player
-    else
-    puts "#{@player2}'s turn."
-    @table[player_choice - 1] = @player2
-    end
-  end
-end
-   
-class CPU
-  attr_reader :cpu_player
-  attr_accessor :cpu_turn
-  include Enumerable
-
-  def initialize (cpu_player, cpu_turn)
-    @cpu_player = cpu_player
-    @cpu_turn = cpu_turn
-  end
-
-  def cpu_turn(player, turn)
-  cpu_player = player == 'C' ? 'X' : 'C'
-    if turn.odd?
-    player_choice = gets.chomp.to_i
-    puts "#{@player1}'s turn."
-    @table[player_choice - 1] = player
-    return player
-    else
-    puts "#{@cpu_player}'s turn."
-    available_moves = @table.select { |x| x.is_a? Fixnum }
-    @table[available_moves.sample - 1] = cpu_player
-    end
-  end
-end
 
 class Game
 attr_reader :wins, :table, :turn_counter, :print_board
@@ -109,42 +61,96 @@ include Enumerable
   end
 end
 
+class Human
+  attr_accessor :player1, :player2, :take_turn
+  include Enumerable
+
+  def initialize (player1, player2, take_turn)
+    @player1 = player1
+    @player2 = player2
+    @take_turn = take_turn
+  end
+  
+  def take_turn
+    turn_counter = @turn_counter
+    player_choice = gets.chomp.to_i
+    if turn_counter == @table.odd?
+    puts "#{@player1}'s turn."
+    @table[player_choice - 1] = @player1
+    return player
+    else
+    puts "#{@player2}'s turn."
+    @table[player_choice - 1] = @player2
+    end
+
+  end
+end
+   
+class CPU
+  attr_reader :cpu_player
+  attr_accessor :player1, :cpu_turn
+  include Enumerable
+
+  def initialize (player, cpu_player, cpu_turn)
+    @player = player
+    @cpu_player = cpu_player
+    @cpu_turn = cpu_turn
+  end
+
+  def cpu_turn
+  cpu_player = @player == 'C' ? 'X' : 'C'
+    if @turn_counter == @table.odd?
+    player_choice = gets.chomp.to_i
+    puts "#{@player}'s turn."
+    @table[player_choice - 1] = player
+    return player
+    else
+    puts "#{@cpu_player}'s turn."
+    available_moves = @table.select { |x| x.is_a? Fixnum }
+    @table[available_moves.sample - 1] = cpu_player
+    end
+  end
+end
+
+
+
 def greeting
   puts 'Welcome to Tic-Tac_Toe'
 end
 
-NEW_GAME = Game.new @wins, @choices, @table, @turn_counter, @choose_mode, @print_board, @winner, @choose_player
+NEW = Game.new @wins, @choices, @table, @turn_counter, 
+  @choose_mode, @print_board, @winner, @choose_player
 
 PVP = Human.new @player1, @player2, @take_turn
 
-COMP = CPU.new @cpu_player, @cpu_turn
+COMP = CPU.new @player, @cpu_player, @cpu_turn
 
 def ttt_game
-  NEW_GAME
   greeting
-  @turn_counter
-  mode = @choose_mode
+  NEW
+  NEW.turn_counter
+  mode = NEW.choose_mode
   if mode == :human
     PVP
-    @player1 = @choose_player
-    @player2 = @choose_player
-    until @winner
-    @print_board
-    @take_turn
-    @turn_counter -= 1
+    PVP.player1 = NEW.choose_player
+    PVP.player2 = NEW.choose_player
+    until NEW.winner?
+    NEW.print_board
+    PVP.take_turn
+    NEW.turn_counter -= 1
     end
   end
   if mode == :cpu
     COMP
-    player1 = choose_player
-    until @winner
-    @print_board
-    @cpu_turn
-    @turn_counter -= 1
+    PVP.player1 = NEW.choose_player
+    until NEW.winner?
+    NEW.print_board
+    COMP.cpu_turn
+    NEW.turn_counter -= 1
     end
   end
-  if @turn_counter == 0
-    @print_board
+  if NEW.turn_counter == 0
+    NEW.print_board
     puts 'Its a Draw!'
     return false
   end
