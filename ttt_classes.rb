@@ -113,11 +113,11 @@ def greeting
   puts 'Welcome to Tic-Tac_Toe'
 end
 
-NEW_GAME = Game.new 
+NEW_GAME = Game.new @wins, @choices, @table, @turn_counter, @choose_mode, @print_board, @winner, @choose_player
 
-PVP = Human.new 
+PVP = Human.new @player1, @player2, @take_turn
 
-COMP = CPU.new 
+COMP = CPU.new @cpu_player, @cpu_turn
 
 def ttt_game
   NEW_GAME
