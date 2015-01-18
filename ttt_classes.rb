@@ -4,11 +4,11 @@ attr_reader :wins, :table, :turn_counter, :print_board
 attr_accessor :choices, :choose_mode, :choose_player
 include Enumerable
   
-  def initialize (wins, choices, table, turn_counter, choose_mode, print_board, winner, choose_player)
+  def initialize (wins, choices, table, choose_mode, print_board, winner, choose_player)
   @wins = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], 
            [2, 5, 8], [3, 6, 9], [1, 5, 9], [7, 5, 3]]
   @choices = ('a'..'z').to_a
-  @table = (1..9).to_a
+  @table = [1..9]
   @turn_counter = 9
   @choose_mode = choose_mode
   @print_board = print_board
@@ -72,9 +72,9 @@ class Human
   end
   
   def take_turn
-    turn_counter = @turn_counter
+    turn = @turn_counter
     player_choice = gets.chomp.to_i
-    if turn_counter == @table.odd?
+    if turn.odd?
     puts "#{@player1}'s turn."
     @table[player_choice - 1] = @player1
     return player
@@ -92,16 +92,17 @@ class CPU
   include Enumerable
 
   def initialize (player, cpu_player, cpu_turn)
-    @player = player
+    @player1 = player1
     @cpu_player = cpu_player
     @cpu_turn = cpu_turn
   end
 
   def cpu_turn
-  cpu_player = @player == 'C' ? 'X' : 'C'
-    if @turn_counter == @table.odd?
+    cpu_player = @player == 'C' ? 'X' : 'C'
+    turn = @turn_counter
+    if turn.odd?
     player_choice = gets.chomp.to_i
-    puts "#{@player}'s turn."
+    puts "#{@player1}'s turn."
     @table[player_choice - 1] = player
     return player
     else
@@ -118,12 +119,11 @@ def greeting
   puts 'Welcome to Tic-Tac_Toe'
 end
 
-NEW = Game.new @wins, @choices, @table, @turn_counter, 
-  @choose_mode, @print_board, @winner, @choose_player
+NEW = Game.new @wins, @choices, @table, @choose_mode, @print_board, @winner, @choose_player
 
 PVP = Human.new @player1, @player2, @take_turn
 
-COMP = CPU.new @player, @cpu_player, @cpu_turn
+COMP = CPU.new @cpu_player, @cpu_turn
 
 def ttt_game
   greeting
