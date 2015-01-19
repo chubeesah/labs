@@ -1,27 +1,17 @@
 class Game
-attr_reader :print_board 
-attr_accessor :choose_mode, :choose_player, :take_turn, :player1, :player2, :turn
-include Enumerable
+attr_reader :turn 
+attr_accessor :player1, :player2
 
-  def initialize(take_turn, player1, player2, print_board, choose_player, winner, cpu_turn, draw)
-    @player1 = player1
-    @player2 = player2
-    @cpu_turn = cpu_turn
-    @take_turn = take_turn
-    @print_board = print_board
-    @choose_player = choose_player
-    @winner = winner
+  def initialize(player1, player2)
     @wins = [[1, 2, 3], [4, 5, 6], [7, 8, 9], [1, 4, 7], [2, 5, 8], 
        [3, 6, 9], [1, 5, 9], [7, 5, 3]]
     @choices = ('a'..'z').to_a
     @board = (1..9).to_a
     @turn = 9
-    @draw = draw
   end
 
   def take_turn
     player_choice = gets.chomp.to_i
-    until @winner
       @turn -= 1
       if @turn.even?
         puts "#{@player1}'s turn."
@@ -31,16 +21,11 @@ include Enumerable
         puts "#{@player2}'s turn."
         @board[player_choice - 1] = @player2
         return @player2
-      end 
-    end
+      end
   end
 
   def draw
-    if @turn == 0
-      puts "It's a Draw!"
-      return false
-      gets
-    end
+    @turn.zero?
   end
     
   def cpu_turn
@@ -91,8 +76,8 @@ include Enumerable
 
   def draw
     if @turn == 0
+      @print_board
       puts "It's a Draw!"
-      return false
     end
   end
 
@@ -100,7 +85,6 @@ end
 
 class Players
   attr_accessor :choose_mode
-  include Enumerable
    
   def initialize(choose_mode)
     @choose_mode = choose_mode
@@ -121,19 +105,20 @@ def greeting
   puts 'Welcome to Tic-Tac_Toe'
 end
 
-NEW = Game.new @take_turn, @player1, @player2, @cpu_turn, @print_board, @choose_player, @winner, @draw
+player1 = Players.new :human
 
-MODE = Players.new @choose_mode
+player2 = Players.new :cpu
+
+game = Game.new player1, player2
 
 def ttt_game
   greeting
-  mode = MODE.choose_mode
-  if mode == :human
-    NEW.player1 = NEW.choose_player
-    NEW.player2 = NEW.choose_player
-    until NEW.winner || NEW.draw
-      NEW.print_board
-      NEW.take_turn
+  if :human
+    game.player1 = game.choose_player
+    game.player2 = game.choose_player
+    until game.winner || game.draw
+      game.print_board
+      game.take_turn
     end
     #NEW.cpu_turn
   end  
