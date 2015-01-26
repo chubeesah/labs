@@ -81,7 +81,6 @@ end
 class Players
 
   def initialize(human, cpu) 
-    @choose_mode = choose_mode
   end
 
   def choose_mode
@@ -96,7 +95,7 @@ class Players
 end
 #===========================================
 GAME = Game.new @player1, @player2
-MODE = Players.new :human, :$cpu
+MODE = Players.new :human, :cpu
 
 def greeting
   puts 'Welcome to Tic-Tac_Toe'
@@ -137,5 +136,3 @@ def ttt_game
 end
 
 ttt_game
-
-
