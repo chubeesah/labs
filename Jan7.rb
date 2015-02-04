@@ -1,78 +1,77 @@
 ## BEWARE THE SEMICOLON!
-
 require 'pry'
 require 'set'
 
-words = ['angus',
-         'onomatopeia',
-         'mississippi',
-         'cookies',
-         'terminal',
-         'illness',
-         'communist',
-         'dictator',
-         'capitalist',
-         'marxist',
-         'darwinism']
+class Hangman
+  attr_accessor :guesses, :win, :lose
 
-def finished? (turns, guesses, answer)
-  turns.zero? || answer.chars.all? { |l| guesses.include?(l) }
-end
-
-def win?(answer, guessed)
-  answer.chars.all? { |x| guessed.include?(x)}
-
-
-end
-
-def display_guesses(guesses, answer)
-  # TODO: check each character print if if guessed, print '-' otherwise
-  answer.each_char do |c|
-    if guesses.include?(c)
-      print(c)
-    else
-      print "-"
-    end
+  def initialize
+    @turns = ARGV.empty? ? 6 : ARGV[0].to_i
+    @answer = Words.sample
+    @win = @answer.chars.all?
+    @lose = turns.zero?
   end
+end
+
+Words = ['angus', 'master', 'onomatopeia', 'arbitrary',
+         'mississippi', 'linked', 'sunburn', 'jealous',
+         'cookies', 'marksman', 'battlefield', 'television', 
+         'terminal', 'gifted', 'goodbye', 'popular',
+         'illness', 'jacket', 'handsome', 'pleasure',
+         'communist', 'blizzard', 'husky', 'likable',
+         'dictator', 'building', 'lollipop', 'bottle',
+         'capitalist', 'maximum', 'berserker', 'grandparent',
+         'marxist', 'establishment', 'cartoon', 'daredevil',
+         'darwinism', 'human', 'expansion', 'juxtaposition']
+
+def finished? (guessed, answer)
+  @lose || answer.chars.all? { |l| guessed.include?(l) }
 end 
 
 def greeting
   puts "Welcome to Hangman"
 end
+def display_guesses(guessed)
+  answer.each_char do |c|
+  if guessed.include?(c)
+      print(c.upcase)
+  else
+      print "-"
+  end
+ end
+end
 
-def game_over(answer, guessed)
-  print answer
-
-    if win?(answer, guessed) then puts " was correct! Congratulations! You solved the puzzle!"
+def game_over(guessed)
+  print @answer.upcase
+    if @win then puts " was correct! Congratulations! You solved the puzzle!"
     else 
       puts " was the answer. You have failed!"
     end
 end
 
-def prompt_player(guesses, answer)
+def prompt_player(guesses)
   display_guesses(guesses, answer)
-  puts " Guess a letter"
+  puts " Guess a letter, you have #{count} guesses left!"
   gets.chomp
 end
 
-
-
-def hangman(words)
-  
-  turn_count = ARGV.empty? ? 6 : ARGV[0].to_i
+def hangman
+  Hangman.new
+  @turns
   guessed = Set.new
-  answer = words.sample(1)[0]
+  @answer
   greeting 
-  until finished?(turn_count, guessed, answer)
-    guess = prompt_player(guessed, answer)
+  until finished?(guessed, @answer)
+    guess = prompt_player(guessed)
     guessed.add(guess)
-    unless answer.include?(guess)
-      turn_count -= 1
+    unless @answer.include?(guess)
+      @turns -= 1
     end
   end
-  game_over(answer, guessed) 
+  game_over(guessed) 
   # TODO: Do I need an argument?
 end
-  
-hangman(words)
+
+hangman
+
  

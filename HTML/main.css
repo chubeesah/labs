@@ -1,0 +1,32 @@
+.container {
+  width: 800px;
+  margin: 0 auto;
+
+}
+
+h1 {
+  color: blue;
+  font-size: 4em;
+  font-weight: normal;
+  text-decoration: underline;
+}
+
+.mylist {
+  width: 100px;
+  margin: o auto;
+}
+
+.mylist ls {
+  font-weight: bold;
+  color: green !important;
+}
+
+p {
+  color: red;
+}
+.maintext{ /* Unspecific; many ids */
+  color: green;
+}
+#lastone{ /* Very Specific; one id*/
+  color: purple;
+}

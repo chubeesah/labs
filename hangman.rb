@@ -19,31 +19,60 @@ def finished? (turns, guesses, answer)
   turns.zero? || answer.chars.all? { |l| guesses.include?(l) }
 end
 
+def win?(answer, guessed)
+  answer.chars.all? { |x| guessed.include?(x)}
+
+
+end
+
+def display_guesses(guesses, answer)
+  # TODO: check each character print if if guessed, print '-' otherwise
+  answer.each_char do |c|
+    if guesses.include?(c)
+      print(c)
+    else
+      print "-"
+    end
+  end
+end 
+
 def greeting
-  # TODO: tell the player about hangman
+  puts "Welcome to Hangman"
 end
 
-def game_over
-  # TODO: tell the player what the word was and if they won or lost
+def game_over(answer, guessed)
+  print answer
+
+    if win?(answer, guessed) then puts " was correct! Congratulations! You solved the puzzle!"
+    else 
+      puts " was the answer. You have failed!"
+    end
 end
 
-def prompt_player
-  # TODO: get user input / show some status
+def prompt_player(guesses, answer)
+  display_guesses(guesses, answer)
+  puts " Guess a letter"
+  gets.chomp
 end
+
+
 
 def hangman(words)
-  turn_count = argv.empty? ? 6 : argv[0].to_i
-  guessed = set.new
+  
+  turn_count = ARGV.empty? ? 6 : ARGV[0].to_i
+  guessed = Set.new
   answer = words.sample(1)[0]
-  greeting # TODO: Do I need an argument?
+  greeting 
   until finished?(turn_count, guessed, answer)
-    guess = prompt_player
-    guesses.add(guess)
+    guess = prompt_player(guessed, answer)
+    guessed.add(guess)
     unless answer.include?(guess)
       turn_count -= 1
     end
   end
-  game_over # TODO: Do I need an argument?
+  game_over(answer, guessed) 
+  # TODO: Do I need an argument?
 end
-
+  
 hangman(words)
+ 

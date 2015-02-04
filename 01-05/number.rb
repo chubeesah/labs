@@ -1,3 +1,5 @@
+require 'pry'
+
 puts "Guess a Number between 1 and 100"
 answer = gets.to_i
 number = rand(1..100)
